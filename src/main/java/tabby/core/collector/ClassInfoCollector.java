@@ -173,7 +173,7 @@ public class ClassInfoCollector {
         if(method.getParameterCount() == 0 && method.isPublic()){
             if(methodName.startsWith("get") || methodName.startsWith("is")){
                 SootClass cls = method.getDeclaringClass();
-                String fieldName = SemanticHelper.getFieldNameByMethodName(methodName);
+                String fieldName = SemanticHelper.getFieldNameByMethodName(methodName, method);
                 return SemanticHelper.hasField(cls, fieldName);
             }
         }
@@ -185,7 +185,7 @@ public class ClassInfoCollector {
         String methodName = method.getName();
         if(methodName.startsWith("set") && method.getParameterCount() == 1 && method.isPublic()){
             SootClass cls = method.getDeclaringClass();
-            String fieldName = SemanticHelper.getFieldNameByMethodName(methodName);
+            String fieldName = SemanticHelper.getFieldNameByMethodName(methodName, method);
             return SemanticHelper.hasField(cls, fieldName);
         }
         return false;

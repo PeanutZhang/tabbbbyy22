@@ -1,6 +1,7 @@
 package tabby.util;
 
 import com.google.common.hash.Hashing;
+import lombok.extern.slf4j.Slf4j;
 import soot.*;
 import soot.jimple.*;
 import soot.jimple.internal.JimpleLocalBox;
@@ -15,6 +16,7 @@ import java.util.Set;
  * @author wh1t3p1g
  * @since 2022/1/7
  */
+@Slf4j
 public class SemanticHelper {
 
     private static List<String> ARRAY_TYPES
@@ -329,18 +331,24 @@ public class SemanticHelper {
         return null;
     }
 
-    public static String getFieldNameByMethodName(String methodName){
-        String fieldName = null;
-        if(methodName.startsWith("set") || methodName.startsWith("get")){
-            fieldName = methodName.substring(3); // getXxx setXxx
-        }else if(methodName.startsWith("is")){
-            fieldName = methodName.substring(2); // isXxx
-        }
-        if(fieldName == null || fieldName.isEmpty()) return null;
+    public static String getFieldNameByMethodName(String methodName, SootMethod method){
+        try {
+            String fieldName = null;
+            if(methodName.startsWith("set") || methodName.startsWith("get")){
+                fieldName = methodName.substring(3); // getXxx setXxx
+            }else if(methodName.startsWith("is")){
+                fieldName = methodName.substring(2); // isXxx
+            }
+            if(fieldName == null || fieldName.isEmpty()) return null;
 
-        String firstChar = fieldName.substring(0,1).toLowerCase();
-        String appendChars = fieldName.substring(1);
-        return firstChar+appendChars;
+            String firstChar = fieldName.substring(0,1).toLowerCase();
+            String appendChars = fieldName.substring(1);
+            return firstChar+appendChars;
+        }catch (Exception ignore) {
+            log.error("un-normalization class: " + method.getDeclaringClass().getName() + "un-normalization method: "
+                    + methodName);
+        }
+        return null;
     }
 
     public static boolean hasDefaultConstructor(SootClass cls){
