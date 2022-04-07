@@ -335,9 +335,17 @@ public class SemanticHelper {
         try {
             String fieldName = null;
             if(methodName.startsWith("set") || methodName.startsWith("get")){
-                fieldName = methodName.substring(3); // getXxx setXxx
+                String s = methodName.substring(3);
+                char chr = s.charAt(0);
+                if (Character.isUpperCase(chr)) {
+                    fieldName = methodName.substring(3); // getXxx setXxx
+                }
             }else if(methodName.startsWith("is")){
-                fieldName = methodName.substring(2); // isXxx
+                String s = methodName.substring(3);
+                char chr = s.charAt(0);
+                if (Character.isUpperCase(chr)) {
+                    fieldName = methodName.substring(2); // isXxx
+                }
             }
             if(fieldName == null || fieldName.isEmpty()) return null;
 
