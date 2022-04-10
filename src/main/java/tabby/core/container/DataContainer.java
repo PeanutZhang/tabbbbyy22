@@ -292,6 +292,37 @@ public class DataContainer {
      * @param subSignature
      * @return
      */
+    public List<MethodReference> getFirstMethodRefFromFatherNodes(SootClass cls, String subSignature, boolean deepFirst, boolean sign){
+        // 父节点包括父类 和 接口
+        MethodReference ctarget = null;
+        MethodReference iTarget = null;
+        List<MethodReference> list = new ArrayList<>();
+        // 从父类找
+        if(cls.hasSuperclass()){
+            SootClass superCls = cls.getSuperclass();
+            ctarget = getTargetMethodRef(superCls, subSignature, deepFirst);
+
+            if(ctarget != null){
+//                return ctarget;
+                list.add(ctarget);
+            }
+        }
+        // 从接口找
+        if(cls.getInterfaceCount() > 0){
+            for(SootClass intface:cls.getInterfaces()){
+                iTarget = getTargetMethodRef(intface, subSignature, deepFirst);
+
+                if(iTarget != null){
+//                    return iTarget;
+                    list.add(iTarget);
+                }
+            }
+        }
+//        return null;
+        return list;
+    }
+
+
     public MethodReference getFirstMethodRefFromFatherNodes(SootClass cls, String subSignature, boolean deepFirst){
         // 父节点包括父类 和 接口
         MethodReference target = null;
@@ -316,6 +347,8 @@ public class DataContainer {
         }
         return null;
     }
+
+
 
     private MethodReference getTargetMethodRef(SootClass cls, String subSignature, boolean deepFirst){
         MethodReference target = null;

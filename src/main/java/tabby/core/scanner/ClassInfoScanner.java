@@ -191,16 +191,22 @@ public class ClassInfoScanner {
         SootMethod currentSootMethod = currentMethodRef.getMethod();
         if(currentSootMethod == null) return;
         SootClass cls = currentSootMethod.getDeclaringClass();
-        MethodReference fatherNodeMethodRef
-                = dataContainer.getFirstMethodRefFromFatherNodes(cls, currentSootMethod.getSubSignature(), false);
-        if(fatherNodeMethodRef != null
-                && !fatherNodeMethodRef.getSignature().equals("<java.lang.Object: void <init>()>")
-        ){
-            Alias alias = Alias.newInstance(fatherNodeMethodRef, currentMethodRef);
-            fatherNodeMethodRef.getChildAliasEdges().add(alias);
-//            currentMethodRef.setAliasEdge(alias);
-            dataContainer.store(alias);
-        }
+
+//        MethodReference fatherNodeMethodRef
+//                = dataContainer.getFirstMethodRefFromFatherNodes(cls, currentSootMethod.getSubSignature(), false);
+
+        List<MethodReference> fatherNodeMethodRef = dataContainer.getFirstMethodRefFromFatherNodes(cls,
+                currentSootMethod.getSubSignature(), false, false);
+
+        fatherNodeMethodRef.forEach(ref -> {
+            if(ref != null
+                    && !ref.getSignature().equals("<java.lang.Object: void <init>()>")
+            ){
+                Alias alias = Alias.newInstance(ref, currentMethodRef);
+                ref.getChildAliasEdges().add(alias);
+                dataContainer.store(alias);
+            }
+        });
     }
 
     public void save(){
