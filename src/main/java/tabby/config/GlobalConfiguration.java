@@ -67,6 +67,9 @@ public class GlobalConfiguration {
 
     public static String THREAD_POOL_SIZE = "max";
 
+    public static String APK_PATH = "";
+    public static String CASES_PATH = "";
+
     public static void init(){
         if(props == null){
             props = new Properties();
@@ -90,6 +93,11 @@ public class GlobalConfiguration {
             BASIC_CLASSES_PATH = String.join(File.separator, RULES_PATH, "basicClasses.json");
             COMMON_JARS_PATH = String.join(File.separator, RULES_PATH, "commonJars.json");
             THREAD_POOL_SIZE = getProperty("tabby.build.thread.size", "max", props);
+
+            APK_PATH = getProperty("tabby.preprocess.apk","",props);
+            APK_PATH = FileUtils.getRealPath(APK_PATH);
+            CASES_PATH = getProperty("tabby.preprocess.cases","",props);
+            CASES_PATH = FileUtils.getRealPath(CASES_PATH);
 
             int maxThreadPoolSize = Runtime.getRuntime().availableProcessors();
             if("max".equals(THREAD_POOL_SIZE)){
@@ -117,7 +125,6 @@ public class GlobalConfiguration {
         IS_LOAD_ENABLE = getBooleanProperty("tabby.load.enable", "false", props);
         IS_BUILD_ENABLE = getBooleanProperty("tabby.build.enable", "false", props);
         IS_DOCKER_IMPORT_PATH = getBooleanProperty("tabby.cache.isDockerImportPath", "false", props);
-
         if(!FileUtils.fileExists(OUTPUT_DIRECTORY)){
             FileUtils.createDirectory(OUTPUT_DIRECTORY);
         }else if(IS_BUILD_ENABLE){
@@ -127,6 +134,7 @@ public class GlobalConfiguration {
 
         // resolve cache directory
         OUTPUT_DIRECTORY = FileUtils.getRealPath(OUTPUT_DIRECTORY);
+        System.out.println("output direct:: "+OUTPUT_DIRECTORY);
 
         CLASSES_OUTPUT_PATH = String.join(File.separator,OUTPUT_DIRECTORY, "GRAPHDB_PUBLIC_CLASSES.csv");
         METHODS_OUTPUT_PATH = String.join(File.separator,OUTPUT_DIRECTORY, "GRAPHDB_PUBLIC_METHODS.csv");

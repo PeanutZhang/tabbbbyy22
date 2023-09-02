@@ -102,48 +102,7 @@ public class FileUtils {
         return null;
     }
 
-    public static void unzipFile(String filePath,String outputPath){
 
-        if(StringUtils.isEmpty(filePath))return;
-        try {
-            File outputFile = new File(outputPath);
-            if(!outputFile.exists()){
-                outputFile.mkdir();
-            }
-
-            try(ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(filePath))){
-                ZipEntry zipEntry = zipInputStream.getNextEntry();
-
-                while (zipEntry != null){
-
-                    String entryName = zipEntry.getName();
-                    String entryPath = outputPath + File.separator+entryName;
-
-                    if(zipEntry.isDirectory()){
-                        File fileDir = new File(entryPath);
-                        fileDir.mkdirs();
-                    }else {
-                        try (FileOutputStream fos = new FileOutputStream(entryPath)) {
-                            byte[] buffer = new byte[1024];
-                            int len;
-                            while ((len = zipInputStream.read(buffer)) > 0) {
-                                fos.write(buffer, 0, len);
-                            }
-                        }
-                    }
-                    zipEntry = zipInputStream.getNextEntry();
-                }
-            }
-
-
-
-
-        }catch (Exception e){
-            System.out.println("unzipError: "+e.getMessage());
-        }
-
-
-    }
 
     /**
      * 提取当前fatJar到临时目录

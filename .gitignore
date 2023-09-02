@@ -36,10 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
-temp/
 *.class
 .idea/
-cases/
 
 .mvn/
 mvnw*
@@ -55,3 +53,4 @@ cql.txt
 env/data
 env/import
 .DS_Store
+temp

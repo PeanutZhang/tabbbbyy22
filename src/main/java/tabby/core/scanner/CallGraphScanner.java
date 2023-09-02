@@ -43,16 +43,16 @@ public class CallGraphScanner {
         Collection<MethodReference> targets =
                 new ArrayList<>(dataContainer.getSavedMethodRefs().values());
         log.info("Build call graph. START!");
-        TickTock tickTock = new TickTock(targets.size(), true);
-        for (MethodReference target : targets) {
-            if(GlobalConfiguration.IS_FULL_CALL_GRAPH_CONSTRUCT){
-                callEdgeCollector.collect(target, dataContainer, tickTock);
-            }else{
-                callGraphCollector.collect(target, dataContainer, tickTock);
-            }
-        }
-        tickTock.await();
-        log.info("Build call graph. DONE!");
+//        TickTock tickTock = new TickTock(targets.size(), true);
+//        for (MethodReference target : targets) {
+//            if(GlobalConfiguration.IS_FULL_CALL_GRAPH_CONSTRUCT){
+//                callEdgeCollector.collect(target, dataContainer, tickTock);
+//            }else{
+//                callGraphCollector.collect(target, dataContainer, tickTock);
+//            }
+//        }
+//        tickTock.await();
+//        log.info("Build call graph. DONE!");
     }
 
     public void save() {

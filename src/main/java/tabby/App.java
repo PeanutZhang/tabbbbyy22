@@ -13,7 +13,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import tabby.config.GlobalConfiguration;
 import tabby.core.Analyser;
+import tabby.util.ApkUtils;
 import tabby.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 @Slf4j
 @SpringBootApplication
@@ -25,11 +32,23 @@ public class App {
     private Analyser analyser;
 
     public static void main(String[] args) {
+
+
         if(args.length == 2 && "--config".equals(args[0])){
             GlobalConfiguration.CONFIG_FILE_PATH = FileUtils.getRealPath(args[1]);
         }
         GlobalConfiguration.init();
+
+        String apkJarPath = GlobalConfiguration.CASES_PATH+ File.separator+"targets";
+        File targetsJars = new File(apkJarPath);
+        if(!targetsJars.exists() || targetsJars.list() == null || targetsJars.list().length == 0){
+            System.out.println("uncompress-------jar-----");
+            ApkUtils.unzipFile(GlobalConfiguration.APK_PATH,apkJarPath);
+            ApkUtils.shellScriptExecutor("d2j.sh",apkJarPath,apkJarPath);
+        }
+
         SpringApplication.run(App.class, args).close();
+
     }
 
     public void setLogDebugLevel(){

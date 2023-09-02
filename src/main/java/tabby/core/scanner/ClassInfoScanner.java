@@ -50,6 +50,7 @@ public class ClassInfoScanner {
         save();
     }
 
+    // start load class
     public Map<String, CompletableFuture<ClassReference>> loadAndExtract(List<String> targets){
         Map<String, CompletableFuture<ClassReference>> results = new HashMap<>();
         log.info("Start to collect {} targets' class information.", targets.size());
@@ -58,12 +59,14 @@ public class ClassInfoScanner {
             moduleClasses = ModulePathSourceLocator.v().getClassUnderModulePath("jrt:/");
         }
         for (final String path : targets) {
+            // soot handle process
             List<String> classes = getTargetClasses(path, moduleClasses);
             if(classes == null) continue;
 
             for (String cl : classes) {
                 try{
 //                    SootClass theClass = SemanticHelper.loadClass(cl);
+                    //try do sth zyh
                     SootClass theClass = Scene.v().loadClassAndSupport(cl);
                     if (!theClass.isPhantom()) {
                         // 这里存在类数量不一致的情况，是因为存在重复的对象
@@ -79,7 +82,7 @@ public class ClassInfoScanner {
         log.info("Total {} classes.", results.size());
         return results;
     }
-
+    // soot get classes-------
     public List<String> getTargetClasses(String filepath, Map<String, List<String>> moduleClasses){
         List<String> classes = null;
         Path path = Paths.get(filepath);
