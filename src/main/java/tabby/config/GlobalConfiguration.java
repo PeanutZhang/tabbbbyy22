@@ -27,6 +27,7 @@ public class GlobalConfiguration {
     public static String SINK_RULE_PATH;
     public static String SYSTEM_RULE_PATH;
     public static String IGNORE_PATH;
+    public static String MODULE_PACKAGES_PATH;
     public static String BASIC_CLASSES_PATH;
     public static String COMMON_JARS_PATH;
     public static String CLASSES_OUTPUT_PATH;
@@ -69,6 +70,7 @@ public class GlobalConfiguration {
 
     public static String APK_PATH = "";
     public static String CASES_PATH = "";
+    public static boolean EXCLUDE_OTHER;
 
     public static void init(){
         if(props == null){
@@ -91,6 +93,7 @@ public class GlobalConfiguration {
             SYSTEM_RULE_PATH = String.join(File.separator, RULES_PATH, "system.json");
             IGNORE_PATH = String.join(File.separator, RULES_PATH, "ignores.json");
             BASIC_CLASSES_PATH = String.join(File.separator, RULES_PATH, "basicClasses.json");
+            MODULE_PACKAGES_PATH = String.join(File.separator,RULES_PATH,"modulePackages.json");
             COMMON_JARS_PATH = String.join(File.separator, RULES_PATH, "commonJars.json");
             THREAD_POOL_SIZE = getProperty("tabby.build.thread.size", "max", props);
 
@@ -98,6 +101,8 @@ public class GlobalConfiguration {
             APK_PATH = FileUtils.getRealPath(APK_PATH);
             CASES_PATH = getProperty("tabby.preprocess.cases","",props);
             CASES_PATH = FileUtils.getRealPath(CASES_PATH);
+
+
 
             int maxThreadPoolSize = Runtime.getRuntime().availableProcessors();
             if("max".equals(THREAD_POOL_SIZE)){
@@ -147,6 +152,10 @@ public class GlobalConfiguration {
         DEBUG = getBooleanProperty("tabby.debug.details", "false", props);
 
         IS_WEB_MODE = "web".equals(MODE);
+
+        EXCLUDE_OTHER = getBooleanProperty("tabby.custom.exclude.enable","false",props);
+
+
         IS_JDK_ONLY = getBooleanProperty("tabby.build.isJDKOnly", "false", props);
 
         if(IS_JDK_ONLY){

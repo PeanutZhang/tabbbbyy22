@@ -2,11 +2,14 @@ package tabby.core.scanner;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import soot.*;
+import tabby.config.GlobalConfiguration;
 import tabby.core.collector.ClassInfoCollector;
 import tabby.core.container.DataContainer;
+import tabby.core.container.RulesContainer;
 import tabby.dal.caching.bean.edge.Alias;
 import tabby.dal.caching.bean.edge.Extend;
 import tabby.dal.caching.bean.edge.Has;
@@ -39,6 +42,9 @@ public class ClassInfoScanner {
     @Autowired
     private ClassInfoCollector collector;
 
+    @Autowired
+    private RulesContainer rulesContainer;
+
     public void run(List<String> paths){
         // 多线程提取基础信息
         Map<String, CompletableFuture<ClassReference>> classes = loadAndExtract(paths);
@@ -49,7 +55,6 @@ public class ClassInfoScanner {
         buildClassEdges(runtimeClasses);
         save();
     }
-
     // start load class
     public Map<String, CompletableFuture<ClassReference>> loadAndExtract(List<String> targets){
         Map<String, CompletableFuture<ClassReference>> results = new HashMap<>();
@@ -67,6 +72,9 @@ public class ClassInfoScanner {
                 try{
 //                    SootClass theClass = SemanticHelper.loadClass(cl);
                     //try do sth zyh
+                    if(GlobalConfiguration.EXCLUDE_OTHER && excludePkg(cl)){
+                        continue;
+                    }
                     SootClass theClass = Scene.v().loadClassAndSupport(cl);
                     if (!theClass.isPhantom()) {
                         // 这里存在类数量不一致的情况，是因为存在重复的对象
@@ -82,6 +90,18 @@ public class ClassInfoScanner {
         log.info("Total {} classes.", results.size());
         return results;
     }
+
+    private boolean excludePkg(String cl){
+        if(StringUtils.isEmpty(cl))return true;
+        List<String> excludedClasses = rulesContainer.modulePackages();
+        for (String packageName: excludedClasses) {
+            if(!cl.contains(packageName)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     // soot get classes-------
     public List<String> getTargetClasses(String filepath, Map<String, List<String>> moduleClasses){
         List<String> classes = null;

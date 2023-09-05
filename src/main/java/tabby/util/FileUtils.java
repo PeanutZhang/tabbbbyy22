@@ -300,7 +300,8 @@ public class FileUtils {
             Path path = Paths.get(filepath);
             return path.toRealPath().toString();
         }catch (Exception ig){
-            throw new IllegalArgumentException("Cache Path error!");
+            log.error("Cache Path error!");
+            return filepath;
         }
     }
 }
