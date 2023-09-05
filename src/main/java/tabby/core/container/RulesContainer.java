@@ -25,11 +25,14 @@ public class RulesContainer {
     private List<String> basicClasses; // 已经分析过的jar包
     private List<String> commonJars;
 
+    private List<String> modulePackages;
+
     public RulesContainer() throws FileNotFoundException {
         load();
         loadIgnore();
         loadBasicClasses();
         loadCommonJars();
+        loadModulePackages();
     }
 
     public TabbyRule.Rule getRule(String classname, String method){
@@ -59,6 +62,10 @@ public class RulesContainer {
             }
         }
         return false;
+    }
+
+    public List<String> modulePackages(){
+        return modulePackages;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -96,6 +103,14 @@ public class RulesContainer {
         basicClasses = (List<String>) FileUtils.getJsonContent(GlobalConfiguration.BASIC_CLASSES_PATH, List.class);
         if(basicClasses == null){
             basicClasses = new ArrayList<>();
+        }
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private void loadModulePackages(){
+        modulePackages = (List<String>) FileUtils.getJsonContent(GlobalConfiguration.MODULE_PACKAGES_PATH,List.class);
+        if(modulePackages == null){
+            modulePackages = new ArrayList<>();
         }
     }
 
