@@ -33,6 +33,7 @@ public class App {
 
     public static void main(String[] args) {
 
+        System.out.println("---------------let's play------------------------");
 
         if(args.length == 2 && "--config".equals(args[0])){
             GlobalConfiguration.CONFIG_FILE_PATH = FileUtils.getRealPath(args[1]);
