@@ -83,7 +83,7 @@ public class ClassInfoScanner {
                     }
                 }catch (Exception e){
                     log.error("Load Error: {}, Message: {}", cl, e.getMessage());
-//                    e.printStackTrace();
+//                    e.printStackTrace();无意义
                 }
             }
         }
@@ -190,6 +190,7 @@ public class ClassInfoScanner {
      * @param classname 待收集的类名
      * @return 具体的类信息
      */
+    // TODO: ----------------------------
     public static ClassReference collect0(String classname, SootClass cls,
                                           DataContainer dataContainer, int depth){
         ClassReference classRef = null;
