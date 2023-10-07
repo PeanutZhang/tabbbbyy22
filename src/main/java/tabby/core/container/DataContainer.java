@@ -79,7 +79,12 @@ public class DataContainer {
                 if(!savedMethodRefs.isEmpty()){
                     List<MethodReference> list = new ArrayList<>(savedMethodRefs.values());
                     savedMethodRefs.clear();
-                    methodRefService.save(list);
+                    for (MethodReference methodReference : list) {
+                        String classname = methodReference.getClassname();
+                       if(!ClassInfoScanner.platformPkg(classname)){
+                           methodRefService.save(methodReference);
+                       }
+                    }
                 }
                 break;
             case "has":
@@ -131,7 +136,9 @@ public class DataContainer {
             savedClassRefs.put(classRef.getName(), classRef);
         }else if(ref instanceof MethodReference){
             MethodReference methodRef = (MethodReference) ref;
-            savedMethodRefs.put(methodRef.getSignature(), methodRef);
+           if(!ClassInfoScanner.platformPkg(methodRef.getName())){
+               savedMethodRefs.put(methodRef.getSignature(), methodRef);
+           }
         }else if(ref instanceof Has){
             savedHasNodes.add((Has) ref);
         }else if(ref instanceof Call){
@@ -270,7 +277,9 @@ public class DataContainer {
                     store(has);
                     ClassInfoScanner.makeAliasRelation(has, this);
                 }
-                store(methodRef);
+                if(!ClassInfoScanner.platformPkg(methodRef.getClassname())){
+                    store(methodRef);
+                }
             }
         }
         return methodRef;

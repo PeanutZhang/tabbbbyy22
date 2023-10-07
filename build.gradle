@@ -45,6 +45,7 @@ dependencies {
 
 bootJar {
     archiveFileName = 'tabby.jar'
+//    destinationDir = file(project.rootDir)
 }
 
 test {

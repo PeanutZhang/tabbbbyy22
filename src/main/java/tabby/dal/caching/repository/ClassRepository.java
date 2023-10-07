@@ -23,6 +23,12 @@ public interface ClassRepository extends CrudRepository<ClassReference, String> 
 
     @Query(value = "CALL CSVWRITE(:path, 'SELECT * FROM CLASSES')", nativeQuery=true)
     void save2Csv(@Param("path") String path);
+    // WHERE NAME NOT LIKE ''androidx.%''
+    // AND NAME NOT LIKE ''android.%''
+    // AND NAME NOT LIKE ''java.%''
+    // AND NAME NOT LIKE ''jdk.%''
+    // AND NAME NOT LIKE ''sun.%''
+
 
     @Query(value = "select * from CLASSES where NAME like 'sun.%' or NAME like 'java.%'", nativeQuery = true)
     List<ClassReference> findAllNecessaryClassRefs();

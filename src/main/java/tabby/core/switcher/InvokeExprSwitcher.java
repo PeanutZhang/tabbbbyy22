@@ -9,6 +9,7 @@ import soot.jimple.internal.JimpleLocal;
 import tabby.core.container.DataContainer;
 import tabby.core.container.RulesContainer;
 import tabby.core.data.TabbyVariable;
+import tabby.core.scanner.ClassInfoScanner;
 import tabby.core.toolkit.PollutedVarsPointsToAnalysis;
 import tabby.dal.caching.bean.edge.Call;
 import tabby.dal.caching.bean.ref.MethodReference;
@@ -74,6 +75,7 @@ public class InvokeExprSwitcher extends AbstractJimpleValueSwitch {
         buildCallRelationship(v.getBase().getType().toString(), sootMethodRef, "InterfaceInvoke");
     }
 
+    // zyh s
     public void buildCallRelationship(String classname, SootMethodRef sootMethodRef, String invokerType){
         MethodReference target = dataContainer.getOrAddMethodRef(sootMethodRef, sootMethodRef.resolve());// 递归父类，接口 查找目标函数
         MethodReference source = dataContainer.getMethodRefBySignature(this.source.getClassname(), this.source.getSignature());
@@ -109,7 +111,7 @@ public class InvokeExprSwitcher extends AbstractJimpleValueSwitch {
             call.setLineNum(unit.getJavaSourceStartLineNumber());
             if(!source.getCallEdge().contains(call)){
                 source.getCallEdge().add(call);
-                dataContainer.store(call);
+                if(!ClassInfoScanner.platformPkg(classname)) dataContainer.store(call);
             }
 
         }

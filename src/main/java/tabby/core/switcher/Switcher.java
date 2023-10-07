@@ -11,6 +11,7 @@ import tabby.config.GlobalConfiguration;
 import tabby.core.container.DataContainer;
 import tabby.core.data.Context;
 import tabby.core.data.TabbyVariable;
+import tabby.core.scanner.ClassInfoScanner;
 import tabby.core.toolkit.PollutedVarsPointsToAnalysis;
 import tabby.dal.caching.bean.edge.Call;
 import tabby.dal.caching.bean.ref.MethodReference;
@@ -230,6 +231,7 @@ public class Switcher {
         return PositionHelper.NOT_POLLUTED_POSITION;
     }
 
+    // zyh s
     public static void buildCallRelationship(String classname, Context context, boolean isOptimize,
                                       MethodReference targetMethodRef, DataContainer dataContainer,
                                       Unit unit, String invokeType, List<Integer> pollutedPosition){
@@ -269,7 +271,7 @@ public class Switcher {
             call.setLineNum(unit.getJavaSourceStartLineNumber());
             if(!sourceMethodRef.getCallEdge().contains(call)){
                 sourceMethodRef.getCallEdge().add(call);
-                dataContainer.store(call);
+                if(!ClassInfoScanner.platformPkg(classname)) dataContainer.store(call);
             }
 
         }

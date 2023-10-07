@@ -7,6 +7,7 @@ import soot.ValueBox;
 import soot.jimple.*;
 import soot.jimple.internal.JimpleLocalBox;
 import tabby.core.container.DataContainer;
+import tabby.core.scanner.ClassInfoScanner;
 import tabby.dal.caching.bean.edge.Call;
 import tabby.dal.caching.bean.ref.MethodReference;
 
@@ -33,10 +34,9 @@ public class DefaultInvokeModel{
             "<java.lang.String: boolean equals(java.lang.Object)>"
     ));
 
-
+    // zyh s
     public void apply(Stmt stmt, boolean isManual, MethodReference methodRef,
                          MethodReference targetMethodRef, DataContainer dataContainer) {
-
         String signature = targetMethodRef.getSignature();
         if(IGNORE_LIST.contains(signature)) return ;
         // 剔除递归调用自身的情况
@@ -54,7 +54,7 @@ public class DefaultInvokeModel{
         }
         call.setLineNum(stmt.getJavaSourceStartLineNumber());
 
-        if(!methodRef.getCallEdge().contains(call)){
+        if(!ClassInfoScanner.platformPkg(methodRef.getClassname()) && !methodRef.getCallEdge().contains(call)){
             methodRef.getCallEdge().add(call);
             dataContainer.store(call);
         }

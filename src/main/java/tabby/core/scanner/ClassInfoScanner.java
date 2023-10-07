@@ -46,7 +46,7 @@ public class ClassInfoScanner {
     private RulesContainer rulesContainer;
 
     public void run(List<String> paths){
-        // 多线程提取基础信息
+        // 多线程提取基础信息 zyh
         Map<String, CompletableFuture<ClassReference>> classes = loadAndExtract(paths);
         transform(classes.values()); // 等待收集结束，并保存classRef
         List<String> runtimeClasses = new ArrayList<>(classes.keySet());
@@ -91,14 +91,25 @@ public class ClassInfoScanner {
         return results;
     }
 
+    //zyh
     private boolean excludePkg(String cl){
         if(StringUtils.isEmpty(cl))return true;
         List<String> excludedClasses = rulesContainer.modulePackages();
         for (String packageName: excludedClasses) {
-            if(!cl.contains(packageName)){
+            if(platformPkg(cl) || !cl.contains(packageName)){
                 return true;
             }
         }
+        return false;
+    }
+    public static boolean platformPkg(String pkgName){
+        if(pkgName == null) return false;
+        if(pkgName.startsWith("android.")
+                || pkgName.startsWith("androidx.")
+        ||pkgName.startsWith("java.")
+        ||pkgName.startsWith("sun.")
+        ||pkgName.startsWith("org.")
+        ||pkgName.startsWith("jdk."))return true;
         return false;
     }
 
@@ -122,13 +133,13 @@ public class ClassInfoScanner {
 
         return classes;
     }
-
+    // zyh s
     public void transform(Collection<CompletableFuture<ClassReference>> futures){
         for(CompletableFuture<ClassReference> future:futures){
             try {
                 ClassReference classRef = future.get();
-
-                dataContainer.store(classRef);
+                String name = classRef.getName();
+               if(!platformPkg(name)) dataContainer.store(classRef);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 // 异步获取出错
@@ -136,11 +147,13 @@ public class ClassInfoScanner {
         }
     }
 
+    // filter 关系 ------------
     public void buildClassEdges(List<String> classes){
         int counter = 0;
         int total = classes.size();
         log.info("Build {} classes' edges.", total);
         for(String cls:classes){
+            if(platformPkg(cls))continue;
             if(counter%10000 == 0){
                 log.info("Build {}/{} classes.", counter, total);
             }
@@ -152,6 +165,7 @@ public class ClassInfoScanner {
         log.info("Build {}/{} classes.", counter, total);
     }
 
+    // zyh s
     public static void extractRelationships(ClassReference clsRef, DataContainer dataContainer, int depth){
         // 建立继承关系
         if(clsRef.isHasSuperClass()){
@@ -162,7 +176,7 @@ public class ClassInfoScanner {
             if(superClsRef != null && !"java.lang.Object".equals(superClsRef.getName())){
                 Extend extend =  Extend.newInstance(clsRef, superClsRef);
                 clsRef.setExtendEdge(extend);
-                dataContainer.store(extend);
+                if(!platformPkg(clsRef.getName())) dataContainer.store(extend);
             }
         }
 
@@ -177,7 +191,7 @@ public class ClassInfoScanner {
                 if(infaceClsRef != null){
                     Interfaces interfaces = Interfaces.newInstance(clsRef, infaceClsRef);
                     clsRef.getInterfaceEdge().add(interfaces);
-                    dataContainer.store(interfaces);
+                    if(!platformPkg(clsRef.getName())) dataContainer.store(interfaces);
                 }
             }
         }
@@ -191,6 +205,7 @@ public class ClassInfoScanner {
      * @return 具体的类信息
      */
     // TODO: ----------------------------
+    // zyh s
     public static ClassReference collect0(String classname, SootClass cls,
                                           DataContainer dataContainer, int depth){
         ClassReference classRef = null;
@@ -216,7 +231,7 @@ public class ClassInfoScanner {
             classRef.setPhantom(true);
         }
 
-        dataContainer.store(classRef);
+       if(classRef !=null && !platformPkg(classRef.getName())) dataContainer.store(classRef);
         return classRef;
     }
 
@@ -235,9 +250,11 @@ public class ClassInfoScanner {
         ref.setInitialed(true);
     }
 
+    // zyh s
     public static void makeAliasRelation(Has has, DataContainer dataContainer){
         MethodReference currentMethodRef = has.getMethodRef();
-
+        String classname = currentMethodRef.getClassname();
+        if(platformPkg(classname))return;
         if("<init>".equals(currentMethodRef.getName())
                 || "<clinit>".equals(currentMethodRef.getName())){
             return;

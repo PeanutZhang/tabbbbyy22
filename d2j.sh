@@ -27,6 +27,7 @@ for file in "$input_folder"/*.dex; do
     d2j-dex2jar.sh -o "$jar_file" "$file"
     if [ $? == 0 ];then
      echo "已转换文件: $file -> $jar_file"
+     rm "$file"
     else
       echo "转换失败---"
     fi

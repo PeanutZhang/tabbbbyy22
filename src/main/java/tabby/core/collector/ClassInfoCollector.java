@@ -11,6 +11,7 @@ import soot.tagkit.VisibilityAnnotationTag;
 import tabby.core.container.DataContainer;
 import tabby.core.container.RulesContainer;
 import tabby.core.data.TabbyRule;
+import tabby.core.scanner.ClassInfoScanner;
 import tabby.dal.caching.bean.edge.Has;
 import tabby.dal.caching.bean.ref.ClassReference;
 import tabby.dal.caching.bean.ref.MethodReference;
@@ -60,6 +61,7 @@ public class ClassInfoCollector {
      * @param method
      * @param ref
      */
+    // zyh s
     public static void extractMethodInfo(SootMethod method,
                                          ClassReference ref,
                                          Set<String> relatedClassnames,
@@ -119,8 +121,11 @@ public class ClassInfoCollector {
 
         Has has = Has.newInstance(ref, methodRef);
         ref.getHasEdge().add(has);
-        dataContainer.store(has);
-        dataContainer.store(methodRef);
+        if(ClassInfoScanner.platformPkg(ref.getName())){
+            dataContainer.store(has);
+            dataContainer.store(methodRef);
+        }
+
     }
 
 
