@@ -54,5 +54,5 @@ cql.txt
 env/data
 env/import
 .DS_Store
-temp/apks/jlink121316.apk
-temp/apks/st_demo.apk
+temp
+tmp
