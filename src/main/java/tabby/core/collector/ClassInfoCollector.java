@@ -121,7 +121,7 @@ public class ClassInfoCollector {
 
         Has has = Has.newInstance(ref, methodRef);
         ref.getHasEdge().add(has);
-        if(ClassInfoScanner.platformPkg(ref.getName())){
+        if(!ClassInfoScanner.platformPkg(ref.getName())){
             dataContainer.store(has);
             dataContainer.store(methodRef);
         }

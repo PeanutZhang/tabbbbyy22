@@ -277,9 +277,7 @@ public class DataContainer {
                     store(has);
                     ClassInfoScanner.makeAliasRelation(has, this);
                 }
-                if(!ClassInfoScanner.platformPkg(methodRef.getClassname())){
                     store(methodRef);
-                }
             }
         }
         return methodRef;
