@@ -5,6 +5,8 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 import tabby.dal.neo4j.entity.MethodEntity;
 
+import java.util.List;
+
 /**
  * @author wh1t3P1g
  * @since 2020/10/10
@@ -38,4 +40,9 @@ public interface MethodRefRepository extends Neo4jRepository<MethodEntity, Strin
 
     @Query("CALL apoc.periodic.iterate(\"CALL apoc.load.csv('file://\"+$path+\"', {header:true}) YIELD map AS row RETURN row\",\"MATCH ( m1:Method {ID:row.SOURCE} ) MATCH ( m2:Method {ID:row.TARGET }) MERGE (m1)-[e:ALIAS {ID:row.ID}]-(m2)\", {batchSize:1000, iterateList:true, parallel:false}) yield total")
     int loadAliasEdgeFromCSV(String path);
+
+    //demo
+    @Query("MATCH (e:Method {classname:'dev.zyh.simple.Employee'}) RETURN e")
+    List<MethodEntity> findMethodsByClassName();
+
 }
